@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js" defer></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="parent">
+      <h3 class="title">Øfdream - Thelema</h3>
+      <div class="audio-parent">
+        <audio controls>
+          <source src="" type="audio/mpeg" />
+        </audio>
+
+        <div>
+          <button class="previous">previous</button>
+          <button class="play">Play</button>
+          <button class="repeat">Repeat</button>
+          <button class="mute">Mute</button>
+          <button class="next">next</button>
+        </div>
+        <div>
+          <span class="time-progress">0:00</span>
+          <input type="range" value="0" max="100" />
+
+          <input type="file" class="file" />
+          <span class="selected-time"></span>
+          <span class="audio-duration"></span>
+        </div>
+      </div>
+    </div>
+    <div class="playlist"></div>
+  </body>
+</html>
