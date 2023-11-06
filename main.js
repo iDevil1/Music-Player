@@ -30,7 +30,7 @@ function getAudio() {
           file.name.charAt(0).toUpperCase() +
             file.name.slice(1).replace(".mp3", "")
         );
-        console.log(file)
+        console.log(file);
         createElement();
       }
     });
