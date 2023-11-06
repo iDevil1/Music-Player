@@ -5,13 +5,17 @@ let next = document.querySelector(".next");
 let play = document.querySelector(".play");
 let repeat = document.querySelector(".repeat");
 let mute = document.querySelector(".mute");
-let input = document.querySelector("input");
+let input = document.querySelector(".audio-input");
+let volumeInput = document.querySelector(".volume-input");
+let file = document.querySelector(".file");
 let timeProgress = document.querySelector(".time-progress");
 let audioDurtaionLength = document.querySelector(".audio-duration");
 let selectedTime = document.querySelector(".selected-time");
 let playList = document.querySelector(".playlist");
 let ifTrue = true;
 let index = 0;
+let increment;
+let ifTrue2 = true;
 
 function getAudio() {
   const input = document.querySelector(".file");
@@ -20,12 +24,15 @@ function getAudio() {
     var file = e.target.files[0];
     var reader = new FileReader();
     reader.addEventListener("load", function (e) {
-      songs.push(e.target.result);
-      titles.push(
-        file.name.charAt(0).toUpperCase() +
-          file.name.slice(1).replace(".mp3", "")
-      );
-      createElement();
+      if (file.type.includes("audio")) {
+        songs.push(e.target.result);
+        titles.push(
+          file.name.charAt(0).toUpperCase() +
+            file.name.slice(1).replace(".mp3", "")
+        );
+        console.log(file)
+        createElement();
+      }
     });
     reader.readAsDataURL(file);
   };
@@ -51,13 +58,15 @@ let songs = [
 ];
 
 audio.src = songs[index];
-
+let btnId;
 function createElement() {
   document.querySelectorAll(".playlist-song").forEach((div) => div.remove());
+  let array = [];
   document
     .querySelectorAll(".playlist-play-song-btn")
     .forEach((div) => div.remove());
   for (let i = 0; i < songs.length; i++) {
+    let divContainer = document.createElement("div");
     let div = document.createElement("div");
     let playBtn = document.createElement("button");
     playBtn.innerText = "play";
@@ -65,21 +74,235 @@ function createElement() {
     div.innerText = titles[i];
     div.classList.add("playlist-song");
     playBtn.classList.add("playlist-play-song-btn");
-    div.setAttribute("src", songs[i]);
-    playBtn.onclick = () => {
-      id = songs.indexOf(div.getAttribute("src"));
-      index = id;
-      title.innerText = titles[id];
-      audio.src = songs[id];
+    playBtn.setAttribute("src", songs[i]);
+    playBtn.setAttribute("data-boolean", ifTrue2);
+    playBtn.setAttribute("title", titles[i]);
+    btnId = songs.indexOf(div.getAttribute("src"));
+    playBtn.id = btnId;
+    increment = 0;
+    let ifTrue = true;
 
-      play.click();
-    };
-    playList.append(playBtn);
-    playList.append(div);
-    console.log(div);
+    divContainer.append(playBtn);
+    divContainer.append(div);
+    playList.append(divContainer);
+    var isPlaying = true;
+    let array = [];
+    document.querySelectorAll(".playlist-play-song-btn").forEach((btn) => {
+      btn.onclick = (e) => {
+        number = 0;
+        let playSrc = btn.getAttribute("src");
+        let playIndex = songs.indexOf(playSrc);
+        index = playIndex;
+        array.push(playIndex);
+
+        console.log();
+
+        if (playIndex !== -1) {
+          if (isPlaying) {
+            if (title.innerText != btn.getAttribute("title")) {
+              // Set the new audio source
+              audio.src = songs[playIndex];
+
+              // Load and play the new audio source
+              audio.load();
+
+              // Update the title or other relevant UI elements
+              title.innerText = titles[playIndex];
+            }
+
+            isPlaying = false;
+          }
+        }
+
+        audio.addEventListener("ended", () => {
+          isPlaying = false;
+        });
+        if (array.length > 1) {
+          console.log(array[array.length - 2], array[array.length - 1]);
+          if (array[array.length - 2] != array[array.length - 1]) {
+            if (title.innerText != btn.getAttribute("title")) {
+              audio.src = songs[playIndex];
+              title.innerText = titles[playIndex];
+              console.log("its not equal 2");
+            }
+            console.log(playIndex, songs[playIndex]);
+
+            ifTrue2 = true;
+          }
+        }
+        if (audio.paused && ifTrue2) {
+          console.log("its not equal 1");
+          audio.play();
+          ifTrue2 = false;
+        } else {
+          audio.pause();
+          ifTrue2 = true;
+        }
+        audio.addEventListener("timeupdate", () => {
+          interval();
+        });
+        audioDurtaion(songs[playIndex], (duration) => {
+          let minutes = Math.floor(duration / 60);
+          let seconds = Math.floor(duration - minutes * 60);
+          if (seconds < 10) {
+            audioDurtaionLength.innerText = minutes + ":0" + seconds;
+          } else {
+            audioDurtaionLength.innerText = minutes + ":" + seconds;
+          }
+        });
+        console.log(array);
+      };
+    });
+
+    // document.querySelectorAll(".playlist-play-song-btn")[
+    //   songs.indexOf(div.getAttribute("src"))
+    // ].onclick = (e) => {
+    // id = songs.indexOf(div.getAttribute("src"));
+    // let prevId;
+
+    // id = songs.indexOf(div.getAttribute("src"));
+    // index = id;
+    // title.innerText = titles[id];
+
+    // audio.src = div.getAttribute("src");
+    // array.push(id);
+    // audio.id = `a-${id}`;
+    // audio.setAttribute("data-id", id);
+    // prevId = songs.indexOf(div.getAttribute("src"));
+
+    // audioDurtaion(songs[index], (duration) => {
+    //   let minutes = Math.floor(duration / 60);
+    //   let seconds = Math.floor(duration - minutes * 60);
+    //   if (seconds < 10) {
+    //     audioDurtaionLength.innerText = minutes + ":0" + seconds;
+    //   } else {
+    //     audioDurtaionLength.innerText = minutes + ":" + seconds;
+    //   }
+    // });
+    // audio.addEventListener("timeupdate", () => {
+    //   interval();
+    //   input.value = 0;
+    // });
+    // ifTrue = false;
+
+    // audio.play();
+    // if (array.length >= 2) {
+    //   let newId = array[e.target.id];
+    //   console.log(newId);
+
+    //   id = songs.indexOf(div.getAttribute("src"));
+    //   let prevId;
+    //   console.log(titles[newId]);
+
+    //   index = id;
+    //   title.innerText = titles[id];
+
+    //   audio.src = div.getAttribute("src");
+    //   array.push(id);
+    //   audio.id = `a-${id}`;
+    //   audio.setAttribute("data-id", id);
+    //   prevId = songs.indexOf(div.getAttribute("src"));
+
+    //   audioDurtaion(songs[index], (duration) => {
+    //     let minutes = Math.floor(duration / 60);
+    //     let seconds = Math.floor(duration - minutes * 60);
+    //     if (seconds < 10) {
+    //       audioDurtaionLength.innerText = minutes + ":0" + seconds;
+    //     } else {
+    //       audioDurtaionLength.innerText = minutes + ":" + seconds;
+    //     }
+    //   });
+    //   audio.addEventListener("timeupdate", () => {
+    //     interval();
+    //     input.value = 0;
+    //   });
+
+    //   play.click();
+
+    //   ifTrue = false;
+    // } else {
+    // }
+    // };
+
+    // playBtn.onclick = (e) => {
+    //   id = e.target.id;
+    //   let prevId;
+
+    //   index = id;
+    //   title.innerText = titles[id];
+
+    //   audio.src = div.getAttribute("src");
+    //   array.push(id);
+    //   audio.id = `a-${id}`;
+    //   audio.setAttribute("data-id", id);
+    //   prevId = songs.indexOf(div.getAttribute("src"));
+    //   audio.addEventListener("timeupdate", () => {
+    //     interval();
+    //   });
+    //   audioDurtaion(songs[index], (duration) => {
+    //     let minutes = Math.floor(duration / 60);
+    //     let seconds = Math.floor(duration - minutes * 60);
+    //     if (seconds < 10) {
+    //       audioDurtaionLength.innerText = minutes + ":0" + seconds;
+    //     } else {
+    //       audioDurtaionLength.innerText = minutes + ":" + seconds;
+    //     }
+    //   });
+
+    //   if (ifTrue) {
+    //     ifTrue = false;
+    //     audio.play();
+    //     audio.addEventListener("timeupdate", () => {
+    //       interval();
+    //     });
+
+    //     audioDurtaion(songs[index], (duration) => {
+    //       let minutes = Math.floor(duration / 60);
+    //       let seconds = Math.floor(duration - minutes * 60);
+    //       if (seconds < 10) {
+    //         audioDurtaionLength.innerText = minutes + ":0" + seconds;
+    //       } else {
+    //         audioDurtaionLength.innerText = minutes + ":" + seconds;
+    //       }
+    //     });
+    //   } else {
+    //     audio.pause();
+    //     audio.addEventListener("timeupdate", () => {
+    //       return;
+    //     });
+    //     ifTrue = true;
+    //   }
+
+    //   console.log(ifTrue);
+    // };
+    // document.querySelectorAll(".playlist-play-song-btn").forEach((btn) => {
+    //   btn.addEventListener("click", () => {});
+    // });
   }
 }
 createElement();
+
+// async function playAudio() {
+//   if (audio.paused && !isPlaying) {
+//     audio.play();
+//   }
+// }
+
+// function pauseAudio() {
+//   if (!audio.paused && isPlaying) {
+//     return audio.pause();
+//   }
+// }
+// const toggleAudio = () => {
+//   if (audio.paused && audio.currentTime > 0 && !audio.ended) {
+//     audio.play();
+//   } else {
+//     audio.pause();
+//   }
+// };
+audio.setAttribute("data-boolean", true);
+function playandstop(btn) {}
+
 function audioDurtaion(src, duration) {
   var audio = new Audio();
   audio.onloadedmetadata = () => {
@@ -98,14 +321,18 @@ audioDurtaion(songs[index], (duration) => {
   }
 });
 
-let number;
+let number = 0;
 function interval() {
   if (ifTrue) {
     let minutes = Math.floor(audio.currentTime / 60);
     let seconds = Math.floor(audio.currentTime - minutes * 60);
     timeProgress.innerText =
       seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
-    number = (Math.floor(audio.currentTime) / Math.floor(audio.duration)) * 100;
+
+    if (!isNaN(audio.duration)) {
+      number =
+        (Math.floor(audio.currentTime) / Math.floor(audio.duration)) * 100;
+    }
 
     input.value = Math.floor(number);
   }
@@ -113,12 +340,17 @@ function interval() {
 
 previous.onclick = () => {
   if (index > 0 && index <= songs.length - 1) {
+    audio.currentTime = 0;
+    input.value = 0;
+    number = 0;
     index = index - 1;
     title.innerText = titles[index];
     audio.src = songs[index];
     audio.play();
-    input.value = 0;
+    audio.muted = false;
+    audio.loop = false;
   }
+
   audioDurtaion(songs[index], (duration) => {
     let minutes = Math.floor(duration / 60);
     let seconds = Math.floor(duration - minutes * 60);
@@ -128,11 +360,10 @@ previous.onclick = () => {
       audioDurtaionLength.innerText = minutes + ":" + seconds;
     }
   });
+
   audio.addEventListener("timeupdate", () => {
     interval();
   });
-  audio.muted = false;
-  audio.loop = false;
 };
 
 audio.onended = () => {
@@ -141,11 +372,15 @@ audio.onended = () => {
 
 next.onclick = () => {
   if (index >= 0 && index < songs.length - 1) {
+    audio.currentTime = 0;
+    input.value = 0;
+    number = 0;
     index = index + 1;
     title.innerText = titles[index];
     audio.src = songs[index];
     audio.play();
-    input.value = 0;
+    audio.muted = false;
+    audio.loop = false;
   }
   audioDurtaion(songs[index], (duration) => {
     let minutes = Math.floor(duration / 60);
@@ -159,8 +394,6 @@ next.onclick = () => {
   audio.addEventListener("timeupdate", () => {
     interval();
   });
-  audio.muted = false;
-  audio.loop = false;
 };
 
 play.onclick = () => {
@@ -169,6 +402,7 @@ play.onclick = () => {
     audio.addEventListener("timeupdate", () => {
       interval();
     });
+
     audioDurtaion(songs[index], (duration) => {
       let minutes = Math.floor(duration / 60);
       let seconds = Math.floor(duration - minutes * 60);
@@ -197,8 +431,10 @@ repeat.onclick = () => {
 mute.onclick = () => {
   if (audio.muted !== true) {
     audio.muted = true;
+    volumeInput.value = 0;
   } else {
     audio.muted = false;
+    volumeInput.value = audio.volume * 100;
   }
 };
 
@@ -221,7 +457,15 @@ input.oninput = (e) => {
   });
 };
 
+input.ontouchend = () => {
+  mouseUp();
+};
+
 input.onmousedown = () => {
+  mouseDown();
+};
+
+input.ontouchstart = () => {
   mouseDown();
 };
 
@@ -249,6 +493,13 @@ function execMouseDown() {
       seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
   });
 }
+
+volumeInput.oninput = () => {
+  audio.volume = volumeInput.value / 100;
+  if (audio.volume != 0) {
+    audio.muted = false;
+  }
+};
 
 // function fetch(url) {
 //   return new Promise((resolve, reject) => {

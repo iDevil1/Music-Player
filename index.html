@@ -8,30 +8,33 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="parent">
-      <h3 class="title">Øfdream - Thelema</h3>
-      <div class="audio-parent">
-        <audio controls>
-          <source src="" type="audio/mpeg" />
-        </audio>
+    <div class="container">
+      <div class="parent">
+        <h3 class="title">Øfdream - Thelema</h3>
+        <div class="audio-parent">
+          <audio controls>
+            <source src="" type="audio/mpeg" />
+          </audio>
 
-        <div>
-          <button class="previous">previous</button>
-          <button class="play">Play</button>
-          <button class="repeat">Repeat</button>
-          <button class="mute">Mute</button>
-          <button class="next">next</button>
-        </div>
-        <div>
-          <span class="time-progress">0:00</span>
-          <input type="range" value="0" max="100" />
+          <div class="buttons">
+            <button class="previous">previous</button>
+            <button class="play">Play</button>
+            <button class="repeat">Repeat</button>
+            <button class="mute">Mute</button>
+            <button class="next">next</button>
+          </div>
+          <div>
+            <span class="time-progress">0:00</span>
+            <input type="range" value="0" max="100" class="audio-input" />
 
-          <input type="file" class="file" />
-          <span class="selected-time"></span>
-          <span class="audio-duration"></span>
+            <span class="selected-time"></span>
+            <span class="audio-duration"></span>
+            <input type="range" value="100" max="100" class="volume-input" />
+            <input type="file" class="file" />
+          </div>
         </div>
       </div>
+      <div class="playlist"></div>
     </div>
-    <div class="playlist"></div>
   </body>
 </html>
