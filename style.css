@@ -13,7 +13,6 @@ body {
   color: white;
   width: 30rem;
   text-align: center;
-
   max-width: 100%;
   padding: 20px;
   box-sizing: border-box;
@@ -50,13 +49,18 @@ body {
 }
 
 button {
-  background-color: #007bff;
+  background-color: transparent;
   color: #fff;
   border: none;
   width: 65px;
   padding: 5px;
   text-align: center;
   cursor: pointer;
+}
+
+svg {
+  width: 30px;
+  height: fit-content;
 }
 
 .buttons {
